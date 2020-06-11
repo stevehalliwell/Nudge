@@ -1,0 +1,17 @@
+{
+    "name": "AID.Nudge.Editor",
+    "references": [
+        "GUID:db6c55ee452991b4aaf6b1c7101b7a76"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
