@@ -401,7 +401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comment:
     linkedObject: {fileID: 0}
-    hidden: 1
+    hidden: 0
     priority: 0
     isTask: 1
     body: '...
