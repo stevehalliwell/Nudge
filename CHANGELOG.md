@@ -9,9 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 
 - Comment class with property drawer, CommentBeh (component), and CommentSO asset
-- read, show read
-- store date
-- sort date
-- task vs comment?
-- settings provider
-- customiser colours and tints!
+- Comments can be hidden
+- Comments can be marked as tasks, indicating they require action
+- Task and Comment window to locate and sort all comments in the project and currently open scenes.
+- Nudge Settings to customise colour tints.
