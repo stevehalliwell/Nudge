@@ -1,7 +1,7 @@
 {
     "name": "AID.Nudge.Editor",
     "references": [
-        "GUID:db6c55ee452991b4aaf6b1c7101b7a76"
+        "GUID:738d39ab3579a014faabaad4d45e03ac"
     ],
     "includePlatforms": [
         "Editor"
