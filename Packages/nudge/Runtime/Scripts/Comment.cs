@@ -15,6 +15,7 @@ namespace AID
         private const string StartingBody = "...\n...";
 
         public UnityEngine.Object linkedObject;
+        static public bool DrawLinkedObjectConnection;
         public bool hidden = false;
         public int priority;
         public bool isTask = false;
