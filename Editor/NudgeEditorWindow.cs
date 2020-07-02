@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEditorInternal;
+using UnityEngine.Scripting;
+using System.Diagnostics;
+using Unity.CodeEditor;
 
 namespace AID
 {
@@ -48,8 +52,6 @@ namespace AID
 
         protected void Recache()
         {
-            //TODO comments should fire that they've been modified so we can react automatically rather than user forcing a recache
-
             allCommentBeh = FindObjectsOfType<CommentBeh>();
 
             var commentSOGuids = AssetDatabase.FindAssets("t:CommentSO");
@@ -71,8 +73,8 @@ namespace AID
 
             windowTabNames = new string[]
             {
-                string.Format("Scene {0}/{1}", sceneCommentsThatPassFilters, sortedCommentBeh.Count),
-                string.Format("Project {0}/{1}", projectCommentsThatPassFilters, sortedCommentSO.Count)
+                string.Format("Scene - {0} [{1}]", sceneCommentsThatPassFilters, sortedCommentBeh.Count),
+                string.Format("Project - {0} [{1}]", projectCommentsThatPassFilters, sortedCommentSO.Count)
             };
         }
 
