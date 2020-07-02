@@ -8,16 +8,26 @@ namespace AID
 {
     public class NudgeEditorWindow : EditorWindow
     {
-        protected Vector2 wholePanelScrollPos, sceneScrollPos, assetScrollPos;
-        protected IComparer<CommentBeh> behComparer;
-        protected IComparer<CommentSO> soComparer;
+        protected Vector2 wholePanelScrollPos, sceneScrollPos, projectScrollPos;
+        protected IComparer<ICommentHolder> sortingComparer;
 
         protected CommentBeh[] allCommentBeh;
-        protected List<CommentBeh> sortedCommentBeh;
+        protected List<ICommentHolder> sortedCommentBeh;
         protected List<CommentSO> allCommentSO;
-        protected List<CommentSO> sortedCommentSO;
+        protected List<ICommentHolder> sortedCommentSO;
 
         protected NudgeSettings nudgeSettings;
+
+        protected enum WindowTabs
+        {
+            Scene,
+            Project,
+        }
+
+        protected WindowTabs windowTabs;
+        private string[] windowTabNames = Enum.GetNames(typeof(WindowTabs));
+        bool foundNull;
+        protected int sceneCommentsThatPassFilters = -1, projectCommentsThatPassFilters = -1;
 
         // Add menu named "My Window" to the Window menu
         [MenuItem("Window/Tasks and Comments")]
@@ -32,13 +42,14 @@ namespace AID
         {
             nudgeSettings = NudgeSettings.GetOrCreateSettings();
             titleContent = new GUIContent("Tasks & Comments");
-            behComparer = new CommentBehDateCreatedSort();
-            soComparer = new CommentSODateCreatedSort();
+            sortingComparer = new CommentHolderDateCreatedSort();
             Recache();
         }
 
         protected void Recache()
         {
+            //TODO comments should fire that they've been modified so we can react automatically rather than user forcing a recache
+
             allCommentBeh = FindObjectsOfType<CommentBeh>();
 
             var commentSOGuids = AssetDatabase.FindAssets("t:CommentSO");
@@ -50,11 +61,28 @@ namespace AID
 
         protected void RunFilters()
         {
-            sortedCommentBeh = allCommentBeh.ToList();
-            sortedCommentBeh.Sort(behComparer);
+            sortedCommentBeh = allCommentBeh.ToList<ICommentHolder>();
+            sortedCommentBeh.Sort(sortingComparer);
+            sceneCommentsThatPassFilters = sortedCommentBeh.Count(x => PassesFilter(x));
 
-            sortedCommentSO = new List<CommentSO>(allCommentSO);
-            sortedCommentSO.Sort(soComparer);
+            sortedCommentSO = new List<ICommentHolder>(allCommentSO);
+            sortedCommentSO.Sort(sortingComparer);
+            projectCommentsThatPassFilters = sortedCommentSO.Count(x => PassesFilter(x));
+
+            windowTabNames = new string[]
+            {
+                string.Format("Scene {0}/{1}", sceneCommentsThatPassFilters, sortedCommentBeh.Count),
+                string.Format("Project {0}/{1}", projectCommentsThatPassFilters, sortedCommentSO.Count)
+            };
+        }
+
+        private bool PassesFilter(ICommentHolder item)
+        {
+            if (item == null) return false;
+            if (item.Comment.hidden && !nudgeSettings.showHidden) return false;
+            if (!item.Comment.isTask && nudgeSettings.onlyShowTasks) return false;
+
+            return true;
         }
 
         private void OnGUI()
@@ -75,23 +103,19 @@ namespace AID
                 switch (nudgeSettings.sortMode)
                 {
                 case NudgeSettings.SortMode.DateCreated:
-                    behComparer = new CommentBehDateCreatedSort();
-                    soComparer = new CommentSODateCreatedSort();
+                    sortingComparer = new CommentHolderDateCreatedSort();
                     break;
 
                 case NudgeSettings.SortMode.Body:
-                    behComparer = new CommentBehBodySort();
-                    soComparer = new CommentSOBodySort();
+                    sortingComparer = new CommentHolderBodySort();
                     break;
 
                 case NudgeSettings.SortMode.ParentObjectName:
-                    behComparer = new CommentBehGameObjectnameAlphaNumericSort();
-                    soComparer = new CommentSONameAlphaNumericSort();
+                    sortingComparer = new CommentHolderNameAlphaNumericSort();
                     break;
 
                 case NudgeSettings.SortMode.Priority:
-                    behComparer = new CommentBehPrioritySort();
-                    soComparer = new CommentSOPrioritySort();
+                    sortingComparer = new CommentHolderPrioritySort();
                     break;
 
                 default:
@@ -101,207 +125,120 @@ namespace AID
                 RunFilters();
             }
 
-            bool foundNull = false;
-            var origCol = GUI.color;
-            const int maxItems = 10;
+            windowTabs = (WindowTabs)GUILayout.Toolbar((int)windowTabs, windowTabNames);
+
+            foundNull = false;
 
             EditorGUILayout.Space();
-            wholePanelScrollPos = EditorGUILayout.BeginScrollView(wholePanelScrollPos);
+
+            switch (windowTabs)
             {
-                EditorGUILayout.PrefixLabel("Scene Comments");
-                if (sortedCommentBeh != null && sortedCommentBeh.Count > 0)
-                {
-                    sceneScrollPos = EditorGUILayout.BeginScrollView(sceneScrollPos, GUILayout.MaxHeight(EditorGUIUtility.singleLineHeight * maxItems));
-                    foreach (var item in sortedCommentBeh)
-                    {
-                        if (item == null)
-                        {
-                            foundNull = true;
-                            continue;
-                        }
-
-                        if (item.comment.hidden)
-                        {
-                            if (!nudgeSettings.showHidden)
-                                continue;
-
-                            GUI.color *= nudgeSettings.hiddenTint;
-                        }
-
-                        if (!item.comment.isTask && nudgeSettings.onlyShowTasks)
-                            continue;
-
-                        if (item.comment.isTask)
-                            GUI.color *= nudgeSettings.isTaskTint;
-
-                        EditorGUILayout.ObjectField(item, typeof(CommentBeh), true);
-                        GUI.color = origCol;
-                    }
-                    EditorGUILayout.EndScrollView();
-                }
-                else
-                {
-                    EditorGUILayout.LabelField("None Found.");
-                }
-
-                EditorGUILayout.Space();
-                EditorGUILayout.PrefixLabel("Project Comments");
-                if (sortedCommentSO != null && sortedCommentSO.Count > 0)
-                {
-                    assetScrollPos = EditorGUILayout.BeginScrollView(assetScrollPos, GUILayout.MaxHeight(EditorGUIUtility.singleLineHeight * maxItems));
-                    foreach (var item in sortedCommentSO)
-                    {
-                        if (item == null)
-                        {
-                            foundNull = true;
-                            continue;
-                        }
-
-                        if (item.comment.hidden)
-                        {
-                            if (!nudgeSettings.showHidden)
-                                continue;
-
-                            GUI.color = nudgeSettings.hiddenTint;
-                        }
-
-                        if (!item.comment.isTask && nudgeSettings.onlyShowTasks)
-                            continue;
-
-                        if (item.comment.isTask)
-                            GUI.color *= nudgeSettings.isTaskTint;
-
-                        EditorGUILayout.ObjectField(item, typeof(CommentBeh), true);
-                        GUI.color = origCol;
-                    }
-                    EditorGUILayout.EndScrollView();
-                }
-                else
-                {
-                    EditorGUILayout.LabelField("None Found.");
-                }
-
-                //var scriptGuids = AssetDatabase.FindAssets("t:script");
-                //var scriptFilePaths = scriptGuids.Select(x => AssetDatabase.GUIDToAssetPath(x));
-                //var filesOfInterest = new List<string>();
-                //find all todos, hacks, fixme,
-
-                //foreach (var item in scriptFilePaths)
-                //{
-                //}
-
-                //UnityEditorInternal.InternalEditorUtility.OpenFileAtLineExternal(classPath, line);
+            case WindowTabs.Scene:
+                DoCommentListScrollView(sortedCommentBeh, typeof(CommentBeh), ref sceneScrollPos);
+                break;
+            case WindowTabs.Project:
+                DoCommentListScrollView(sortedCommentSO, typeof(CommentSO), ref projectScrollPos);
+                break;
+            default:
+                break;
             }
-            EditorGUILayout.EndScrollView();
 
             if (foundNull || nudgeSettings.constantRecache)
             {
                 Recache();
             }
         }
+
+        private void DoCommentListScrollView(List<ICommentHolder> list, System.Type type, ref Vector2 scrollPos)
+        {
+            var origCol = GUI.color;
+            if (list != null && list.Count > 0)
+            {
+                scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+                foreach (var item in list)
+                {
+                    if (item == null)
+                    {
+                        foundNull = true;
+                        continue;
+                    }
+
+                    if (item.Comment.hidden)
+                    {
+                        if (!nudgeSettings.showHidden)
+                            continue;
+
+                        GUI.color *= nudgeSettings.hiddenTint;
+                    }
+
+                    if (!item.Comment.isTask && nudgeSettings.onlyShowTasks)
+                        continue;
+
+                    if (item.Comment.isTask)
+                        GUI.color *= nudgeSettings.isTaskTint;
+
+                    EditorGUILayout.ObjectField(item.UnityObject, type, true);
+                    GUI.color = origCol;
+                }
+                EditorGUILayout.EndScrollView();
+            }
+            else
+            {
+                EditorGUILayout.LabelField("None Found.");
+            }
+        }
     }
 
     #region Comparers
 
-    internal class CommentBehGameObjectnameAlphaNumericSort : IComparer<CommentBeh>
+    internal class CommentHolderDateCreatedSort : IComparer<ICommentHolder>
     {
-        public int Compare(CommentBeh lhs, CommentBeh rhs)
+        public int Compare(ICommentHolder lhs, ICommentHolder rhs)
         {
             if (lhs == rhs) return 0;
             if (lhs == null) return -1;
             if (rhs == null) return 1;
 
-            return EditorUtility.NaturalCompare(lhs.gameObject.name, rhs.gameObject.name);
-        }
-    }
-
-    internal class CommentSONameAlphaNumericSort : IComparer<CommentSO>
-    {
-        public int Compare(CommentSO lhs, CommentSO rhs)
-        {
-            if (lhs == rhs) return 0;
-            if (lhs == null) return -1;
-            if (rhs == null) return 1;
-
-            return EditorUtility.NaturalCompare(lhs.name, rhs.name);
-        }
-    }
-
-    internal class CommentBehDateCreatedSort : IComparer<CommentBeh>
-    {
-        public int Compare(CommentBeh lhs, CommentBeh rhs)
-        {
-            if (lhs == rhs) return 0;
-            if (lhs == null) return -1;
-            if (rhs == null) return 1;
-
-            var lhsDT = DateTime.Parse(lhs.comment.dateCreated);
-            var rhsDT = DateTime.Parse(rhs.comment.dateCreated);
+            var lhsDT = DateTime.Parse(lhs.Comment.dateCreated);
+            var rhsDT = DateTime.Parse(rhs.Comment.dateCreated);
 
             return -DateTime.Compare(lhsDT, rhsDT);
         }
     }
 
-    internal class CommentSODateCreatedSort : IComparer<CommentSO>
+    internal class CommentHolderNameAlphaNumericSort : IComparer<ICommentHolder>
     {
-        public int Compare(CommentSO lhs, CommentSO rhs)
+        public int Compare(ICommentHolder lhs, ICommentHolder rhs)
         {
             if (lhs == rhs) return 0;
             if (lhs == null) return -1;
             if (rhs == null) return 1;
 
-            var lhsDT = DateTime.Parse(lhs.comment.dateCreated);
-            var rhsDT = DateTime.Parse(rhs.comment.dateCreated);
-
-            return -DateTime.Compare(lhsDT, rhsDT);
+            return EditorUtility.NaturalCompare(lhs.Name, rhs.Name);
         }
     }
 
-    internal class CommentBehBodySort : IComparer<CommentBeh>
+    internal class CommentHolderBodySort : IComparer<ICommentHolder>
     {
-        public int Compare(CommentBeh lhs, CommentBeh rhs)
+        public int Compare(ICommentHolder lhs, ICommentHolder rhs)
         {
             if (lhs == rhs) return 0;
             if (lhs == null) return -1;
             if (rhs == null) return 1;
 
-            return string.Compare(lhs.comment.body, rhs.comment.body);
+            return string.Compare(lhs.Comment.body, rhs.Comment.body);
         }
     }
 
-    internal class CommentSOBodySort : IComparer<CommentSO>
+    internal class CommentHolderPrioritySort : IComparer<ICommentHolder>
     {
-        public int Compare(CommentSO lhs, CommentSO rhs)
+        public int Compare(ICommentHolder lhs, ICommentHolder rhs)
         {
             if (lhs == rhs) return 0;
             if (lhs == null) return -1;
             if (rhs == null) return 1;
 
-            return string.Compare(lhs.comment.body, rhs.comment.body);
-        }
-    }
-
-    internal class CommentBehPrioritySort : IComparer<CommentBeh>
-    {
-        public int Compare(CommentBeh lhs, CommentBeh rhs)
-        {
-            if (lhs == rhs) return 0;
-            if (lhs == null) return -1;
-            if (rhs == null) return 1;
-
-            return -lhs.comment.priority.CompareTo(rhs.comment.priority);
-        }
-    }
-
-    internal class CommentSOPrioritySort : IComparer<CommentSO>
-    {
-        public int Compare(CommentSO lhs, CommentSO rhs)
-        {
-            if (lhs == rhs) return 0;
-            if (lhs == null) return -1;
-            if (rhs == null) return 1;
-
-            return -lhs.comment.priority.CompareTo(rhs.comment.priority);
+            return -lhs.Comment.priority.CompareTo(rhs.Comment.priority);
         }
     }
 

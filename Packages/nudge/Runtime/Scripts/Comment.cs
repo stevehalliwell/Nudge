@@ -2,6 +2,13 @@
 
 namespace AID
 {
+    public interface ICommentHolder
+    {
+        Comment Comment { get; }
+        string Name { get; }
+        UnityEngine.Object UnityObject { get; }
+    }
+
     [System.Serializable]
     public class Comment
     {
