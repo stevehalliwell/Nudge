@@ -3,9 +3,15 @@
 namespace AID
 {
     [CreateAssetMenu()]
-    public class CommentSO : ScriptableObject
+    public class CommentSO : ScriptableObject, ICommentHolder
     {
         public Comment comment;
+
+        public Comment Comment => comment;
+
+        public string Name => name;
+
+        public Object UnityObject => this;
 
 #if UNITY_2020_1_OR_NEWER
         public virtual void OnValidate()
