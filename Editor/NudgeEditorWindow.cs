@@ -8,7 +8,7 @@ using UnityEngine.Scripting;
 using System.Diagnostics;
 using Unity.CodeEditor;
 
-namespace AID
+namespace AID.Editor
 {
     public class NudgeEditorWindow : EditorWindow
     {

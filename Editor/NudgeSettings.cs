@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 //https://docs.unity3d.com/2018.3/Documentation/ScriptReference/SettingsProvider.html
 
-namespace AID
+namespace AID.Editor
 {
     public class NudgeSettings : ScriptableObject
     {
@@ -24,7 +24,6 @@ namespace AID
         public Color isTaskTint = new Color(0.8f, 1, 0.8f, 1);
         [Tooltip("Draws, in the scene, an icon and line between a Scene Comment and the object to which it is refering.")]
         public bool drawLinkedConnection = true;
-        public static string DrawConnectionPropName = "drawLinkedConnection";
 
         public const string DefaultNudgeSettingsPath = "Assets/Editor/NudgeSettings.asset";
 
@@ -91,8 +90,6 @@ namespace AID
             }
 
             nudgeSettingsSerializedObject.ApplyModifiedProperties();
-
-            Comment.DrawLinkedObjectConnection = nudgeSettingsSerializedObject.FindProperty(NudgeSettings.DrawConnectionPropName).boolValue;
         }
 
         // Register the SettingsProvider
