@@ -7,10 +7,19 @@ namespace AID.Editor
 {
     public static class CommentBehGizmoDrawer
     {
-        [DrawGizmo(GizmoType.Active | GizmoType.NonSelected, typeof(CommentBeh))]
+        [DrawGizmo(GizmoType.Selected | GizmoType.NonSelected, typeof(CommentBeh))]
         public static void DrawGizmoForMyScript(CommentBeh commentBeh, GizmoType gizmoType)
         {
-            Gizmos.DrawIcon(commentBeh.transform.position, "Packages/Nudge/Gizmos/CommentBeh Icon.png", true);
+            var nudgeSettings = NudgeSettings.GetOrCreateSettings();
+
+            if (!nudgeSettings.showHidden && commentBeh.comment.hidden && (gizmoType & GizmoType.Selected ) == 0)
+                return;
+            
+            Gizmos.DrawIcon(
+                commentBeh.transform.position,
+                commentBeh.comment.isTask ? nudgeSettings.commentTaskGizmoPath : nudgeSettings.sceneCommentGizmoPath, 
+                true);
+
             if (commentBeh.comment.linkedObject != null)
             {
                 Transform linkedTransform = null;
@@ -26,9 +35,13 @@ namespace AID.Editor
                 if (linkedTransform != null && 
                     ( (gizmoType & GizmoType.Selected) != 0 || NudgeSettings.GetOrCreateSettings().drawLinkedConnection) )
                 {
-                    Gizmos.DrawIcon(linkedTransform.position, "Packages/Nudge/Gizmos/CommentBehLink Icon.png", true);
+                    Gizmos.DrawIcon(
+                        linkedTransform.position,
+                        commentBeh.comment.isTask ? nudgeSettings.commentTaskLinkedGizmoPath : nudgeSettings.commentLinkedGizmoPath, 
+                        true);
+
                     var prevCol = Gizmos.color;
-                    Gizmos.color = Color.grey;
+                    Gizmos.color = prevCol * nudgeSettings.linkedTint;
                     Gizmos.DrawLine(commentBeh.transform.position, linkedTransform.position);
                     Gizmos.color = prevCol;
                 }
