@@ -19,8 +19,8 @@ MonoBehaviour:
   hiddenTint: {r: 0.8, g: 0.8, b: 0.8, a: 1}
   isTaskTint: {r: 0.8, g: 1, b: 0.8, a: 1}
   linkedTint: {r: 0.8, g: 0.8, b: 1, a: 1}
-  drawLinkedConnection: 0
-  sceneCommentGizmoPath: Packages/Nudge/Gizmos/CommentIcon.png
-  commentLinkedGizmoPath: Packages/Nudge/Gizmos/CommentLinkIcon.png
-  commentTaskGizmoPath: Packages/Nudge/Gizmos/CommentTaskIcon.png
-  commentTaskLinkedGizmoPath: Packages/Nudge/Gizmos/CommentTaskLinkIcon.png
+  drawLinkedConnection: 1
+  sceneCommentGizmoPath: Packages/com.aid.nudge/Gizmos/CommentIcon.png
+  commentLinkedGizmoPath: Packages/com.aid.nudge/Gizmos/CommentLinkIcon.png
+  commentTaskGizmoPath: Packages/com.aid.nudge/Gizmos/CommentTaskIcon.png
+  commentTaskLinkedGizmoPath: Packages/com.aid.nudge/Gizmos/CommentTaskLinkIcon.png

@@ -25,10 +25,10 @@ namespace AID.Editor
         public Color linkedTint = new Color(0.8f, 0.8f, 1, 1);
         [Tooltip("Draws, in the scene, an icon and line between a Scene Comment and the object to which it is refering.")]
         public bool drawLinkedConnection = true;
-        public string sceneCommentGizmoPath = "Packages/Nudge/Gizmos/CommentIcon.png";
-        public string commentLinkedGizmoPath = "Packages/Nudge/Gizmos/CommentLinkIcon.png";
-        public string commentTaskGizmoPath = "Packages/Nudge/Gizmos/CommentTaskIcon.png";
-        public string commentTaskLinkedGizmoPath = "Packages/Nudge/Gizmos/CommentTaskLinkIcon.png";
+        public string sceneCommentGizmoPath = "Packages/com.aid.nudge/Gizmos/CommentIcon.png";
+        public string commentLinkedGizmoPath = "Packages/com.aid.nudge/Gizmos/CommentLinkIcon.png";
+        public string commentTaskGizmoPath = "Packages/com.aid.nudge/Gizmos/CommentTaskIcon.png";
+        public string commentTaskLinkedGizmoPath = "Packages/com.aid.nudge/Gizmos/CommentTaskLinkIcon.png";
 
         public const string DefaultNudgeSettingsPath = "Assets/Editor/NudgeSettings.asset";
 
