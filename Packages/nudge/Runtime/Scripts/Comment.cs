@@ -14,17 +14,31 @@ namespace AID
     {
         private const string StartingBody = "...\n...";
 
-        public UnityEngine.Object linkedObject;
-        public bool hidden = false;
-        public int priority;
-        public bool isTask = false;
-        public string body = StartingBody;
-        [HideInInspector] public string dateCreated;
+#pragma warning disable CS0649
+        [SerializeField] private UnityEngine.Object linkedObject;
+        [SerializeField] private int priority;
+#pragma warning restore CS0649
+        [SerializeField] private bool hidden = false;
+        [SerializeField] private bool isTask = false;
+        [SerializeField] private string body = StartingBody;
+        [HideInInspector] [SerializeField] private string dateCreated;
+        [HideInInspector] [SerializeField] private string guidString = System.Guid.NewGuid().ToString("N");
 
-        public void ValidateCreationDate()
+        public void ValidateInternalData()
         {
             if (string.IsNullOrEmpty(dateCreated))
                 dateCreated = System.DateTime.Now.ToString("O");
+
+            if (string.IsNullOrEmpty(guidString))
+                guidString = System.Guid.NewGuid().ToString("N");
         }
+
+        public UnityEngine.Object LinkedObject => linkedObject;
+        public bool Hidden => hidden;
+        public int Priority => priority;
+        public bool IsTask => isTask;
+        public string Body => body;
+        public string DateCreated => dateCreated;
+        public string GUIDString => guidString;
     }
 }

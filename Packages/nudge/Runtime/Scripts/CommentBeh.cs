@@ -20,7 +20,16 @@ namespace AID
             if (comment == null)
                 comment = new Comment();
 
-            comment.ValidateCreationDate();
+            comment.ValidateInternalData();
         }
+
+#if UNITY_EDITOR
+
+        [ContextMenu("Copy GUID")]
+        public void CopyGUID()
+        {
+            UnityEditor.EditorGUIUtility.systemCopyBuffer = comment.GUIDString;
+        }
+#endif
     }
 }

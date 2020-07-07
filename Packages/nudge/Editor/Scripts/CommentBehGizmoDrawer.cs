@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace AID.Editor
@@ -8,36 +6,36 @@ namespace AID.Editor
     public static class CommentBehGizmoDrawer
     {
         [DrawGizmo(GizmoType.Selected | GizmoType.NonSelected, typeof(CommentBeh))]
-        public static void DrawGizmoForMyScript(CommentBeh commentBeh, GizmoType gizmoType)
+        public static void DrawGizmoForCommentBeh(CommentBeh commentBeh, GizmoType gizmoType)
         {
             var nudgeSettings = NudgeSettings.GetOrCreateSettings();
 
-            if (!nudgeSettings.showHidden && commentBeh.comment.hidden && (gizmoType & GizmoType.Selected ) == 0)
+            if (!nudgeSettings.showHidden && commentBeh.comment.Hidden && (gizmoType & GizmoType.Selected) == 0)
                 return;
-            
+
             Gizmos.DrawIcon(
                 commentBeh.transform.position,
-                commentBeh.comment.isTask ? nudgeSettings.commentTaskGizmoPath : nudgeSettings.sceneCommentGizmoPath, 
+                commentBeh.comment.IsTask ? nudgeSettings.commentTaskGizmoPath : nudgeSettings.sceneCommentGizmoPath,
                 true);
 
-            if (commentBeh.comment.linkedObject != null)
+            if (commentBeh.comment.LinkedObject != null)
             {
                 Transform linkedTransform = null;
-                if (commentBeh.comment.linkedObject is GameObject)
+                if (commentBeh.comment.LinkedObject is GameObject)
                 {
-                    linkedTransform = (commentBeh.comment.linkedObject as GameObject).transform;
+                    linkedTransform = (commentBeh.comment.LinkedObject as GameObject).transform;
                 }
-                else if (commentBeh.comment.linkedObject is Component)
+                else if (commentBeh.comment.LinkedObject is Component)
                 {
-                    linkedTransform = (commentBeh.comment.linkedObject as Component).transform;
+                    linkedTransform = (commentBeh.comment.LinkedObject as Component).transform;
                 }
 
-                if (linkedTransform != null && 
-                    ( (gizmoType & GizmoType.Selected) != 0 || NudgeSettings.GetOrCreateSettings().drawLinkedConnection) )
+                if (linkedTransform != null &&
+                    ((gizmoType & GizmoType.Selected) != 0 || NudgeSettings.GetOrCreateSettings().drawLinkedConnection))
                 {
                     Gizmos.DrawIcon(
                         linkedTransform.position,
-                        commentBeh.comment.isTask ? nudgeSettings.commentTaskLinkedGizmoPath : nudgeSettings.commentLinkedGizmoPath, 
+                        commentBeh.comment.IsTask ? nudgeSettings.commentTaskLinkedGizmoPath : nudgeSettings.commentLinkedGizmoPath,
                         true);
 
                     var prevCol = Gizmos.color;

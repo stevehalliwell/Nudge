@@ -45,7 +45,6 @@ namespace AID.Editor
             EditorGUI.PropertyField(position, p);
             position.y += EditorGUI.GetPropertyHeight(p);
 
-
             var bodyH = BodyPropHeight(property);
 
             p = property.FindPropertyRelative("body");

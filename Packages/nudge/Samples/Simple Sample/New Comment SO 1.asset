@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comment:
     linkedObject: {fileID: 0}
-    hidden: 1
     priority: 100
+    hidden: 1
     isTask: 0
     body: '...
 
       ...'
     dateCreated: 2020-06-10T22:17:48.9263964+10:00
+    guidString: 9af3c3456ab340169f2352136a987f04
