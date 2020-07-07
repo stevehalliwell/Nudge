@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEditorInternal;
-using UnityEngine.Scripting;
-using System.Diagnostics;
-using Unity.CodeEditor;
 
 namespace AID.Editor
 {
@@ -19,6 +14,7 @@ namespace AID.Editor
         protected List<ICommentHolder> sortedCommentBeh;
         protected List<CommentSO> allCommentSO;
         protected List<ICommentHolder> sortedCommentSO;
+        protected string searchString;
 
         protected NudgeSettings nudgeSettings;
 
@@ -29,8 +25,8 @@ namespace AID.Editor
         }
 
         protected WindowTabs windowTabs;
-        private string[] windowTabNames = Enum.GetNames(typeof(WindowTabs));
-        bool foundNull;
+        private string[] windowTabNames = System.Enum.GetNames(typeof(WindowTabs));
+        private bool foundNull;
         protected int sceneCommentsThatPassFilters = -1, projectCommentsThatPassFilters = -1;
 
         // Add menu named "My Window" to the Window menu
@@ -81,8 +77,12 @@ namespace AID.Editor
         private bool PassesFilter(ICommentHolder item)
         {
             if (item == null) return false;
-            if (item.Comment.hidden && !nudgeSettings.showHidden) return false;
-            if (!item.Comment.isTask && nudgeSettings.onlyShowTasks) return false;
+            if (item.Comment.Hidden && !nudgeSettings.showHidden) return false;
+            if (!item.Comment.IsTask && nudgeSettings.onlyShowTasks) return false;
+            if (!string.IsNullOrEmpty(searchString) &&
+                !item.Comment.GUIDString.Contains(searchString) &&
+                !item.Comment.Body.Contains(searchString))
+                return false;
 
             return true;
         }
@@ -90,6 +90,7 @@ namespace AID.Editor
         private void OnGUI()
         {
             EditorGUI.BeginChangeCheck();
+            searchString = EditorGUILayout.TextField("Search:", searchString);
             nudgeSettings.sortMode = (NudgeSettings.SortMode)EditorGUILayout.EnumPopup(new GUIContent("Sort by;"), nudgeSettings.sortMode);
             nudgeSettings.showHidden = EditorGUILayout.Toggle(new GUIContent("Show Hidden?"), nudgeSettings.showHidden);
             nudgeSettings.onlyShowTasks = EditorGUILayout.Toggle(new GUIContent("Only Show Tasks?"), nudgeSettings.onlyShowTasks);
@@ -104,23 +105,23 @@ namespace AID.Editor
             {
                 switch (nudgeSettings.sortMode)
                 {
-                case NudgeSettings.SortMode.DateCreated:
-                    sortingComparer = new CommentHolderDateCreatedSort();
-                    break;
+                    case NudgeSettings.SortMode.DateCreated:
+                        sortingComparer = new CommentHolderDateCreatedSort();
+                        break;
 
-                case NudgeSettings.SortMode.Body:
-                    sortingComparer = new CommentHolderBodySort();
-                    break;
+                    case NudgeSettings.SortMode.Body:
+                        sortingComparer = new CommentHolderBodySort();
+                        break;
 
-                case NudgeSettings.SortMode.ParentObjectName:
-                    sortingComparer = new CommentHolderNameAlphaNumericSort();
-                    break;
+                    case NudgeSettings.SortMode.ParentObjectName:
+                        sortingComparer = new CommentHolderNameAlphaNumericSort();
+                        break;
 
-                case NudgeSettings.SortMode.Priority:
-                    sortingComparer = new CommentHolderPrioritySort();
-                    break;
+                    case NudgeSettings.SortMode.Priority:
+                        sortingComparer = new CommentHolderPrioritySort();
+                        break;
 
-                default:
+                    default:
                     break;
                 }
 
@@ -135,13 +136,15 @@ namespace AID.Editor
 
             switch (windowTabs)
             {
-            case WindowTabs.Scene:
-                DoCommentListScrollView(sortedCommentBeh, typeof(CommentBeh), ref sceneScrollPos);
-                break;
-            case WindowTabs.Project:
-                DoCommentListScrollView(sortedCommentSO, typeof(CommentSO), ref projectScrollPos);
-                break;
-            default:
+                case WindowTabs.Scene:
+                    DoCommentListScrollView(sortedCommentBeh, typeof(CommentBeh), ref sceneScrollPos);
+                    break;
+
+                case WindowTabs.Project:
+                    DoCommentListScrollView(sortedCommentSO, typeof(CommentSO), ref projectScrollPos);
+                    break;
+
+                default:
                 break;
             }
 
@@ -165,7 +168,12 @@ namespace AID.Editor
                         continue;
                     }
 
-                    if (item.Comment.hidden)
+                    if (!string.IsNullOrEmpty(searchString) &&
+                        !item.Comment.GUIDString.Contains(searchString) &&
+                        !item.Comment.Body.Contains(searchString))
+                        continue;
+
+                    if (item.Comment.Hidden)
                     {
                         if (!nudgeSettings.showHidden)
                             continue;
@@ -173,10 +181,10 @@ namespace AID.Editor
                         GUI.color *= nudgeSettings.hiddenTint;
                     }
 
-                    if (!item.Comment.isTask && nudgeSettings.onlyShowTasks)
+                    if (!item.Comment.IsTask && nudgeSettings.onlyShowTasks)
                         continue;
 
-                    if (item.Comment.isTask)
+                    if (item.Comment.IsTask)
                         GUI.color *= nudgeSettings.isTaskTint;
 
                     EditorGUILayout.ObjectField(item.UnityObject, type, true);
@@ -201,10 +209,10 @@ namespace AID.Editor
             if (lhs == null) return -1;
             if (rhs == null) return 1;
 
-            var lhsDT = DateTime.Parse(lhs.Comment.dateCreated);
-            var rhsDT = DateTime.Parse(rhs.Comment.dateCreated);
+            var lhsDT = System.DateTime.Parse(lhs.Comment.DateCreated);
+            var rhsDT = System.DateTime.Parse(rhs.Comment.DateCreated);
 
-            return -DateTime.Compare(lhsDT, rhsDT);
+            return -System.DateTime.Compare(lhsDT, rhsDT);
         }
     }
 
@@ -228,7 +236,7 @@ namespace AID.Editor
             if (lhs == null) return -1;
             if (rhs == null) return 1;
 
-            return string.Compare(lhs.Comment.body, rhs.Comment.body);
+            return string.Compare(lhs.Comment.Body, rhs.Comment.Body);
         }
     }
 
@@ -240,7 +248,7 @@ namespace AID.Editor
             if (lhs == null) return -1;
             if (rhs == null) return 1;
 
-            return -lhs.Comment.priority.CompareTo(rhs.Comment.priority);
+            return -lhs.Comment.Priority.CompareTo(rhs.Comment.Priority);
         }
     }
 
