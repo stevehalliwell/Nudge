@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace AID
 {
@@ -14,13 +15,17 @@ namespace AID
     {
         private const string StartingBody = "...\n...";
 
-#pragma warning disable CS0649
-        [SerializeField] private UnityEngine.Object linkedObject;
-        [SerializeField] private int priority;
-#pragma warning restore CS0649
-        [SerializeField] private bool hidden = false;
+        [FormerlySerializedAs("hidden")]
+        [SerializeField] private bool isHidden = false;
         [SerializeField] private bool isTask = false;
+#pragma warning disable CS0649
+        [SerializeField] private int priority;
+        [TextArea(5, 25)]
         [SerializeField] private string body = StartingBody;
+        [SerializeField] private UnityEngine.Object linkedObject;
+#pragma warning restore CS0649
+
+
         [HideInInspector] [SerializeField] private string dateCreated;
         [HideInInspector] [SerializeField] private string guidString = System.Guid.NewGuid().ToString("N");
 
@@ -34,7 +39,7 @@ namespace AID
         }
 
         public UnityEngine.Object LinkedObject => linkedObject;
-        public bool Hidden => hidden;
+        public bool Hidden => isHidden;
         public int Priority => priority;
         public bool IsTask => isTask;
         public string Body => body;
