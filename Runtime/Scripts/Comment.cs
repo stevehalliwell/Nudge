@@ -15,14 +15,14 @@ namespace AID
     {
         private const string StartingBody = "...\n...";
 
-        [FormerlySerializedAs("hidden")]
         [SerializeField] private bool isHidden = false;
         [SerializeField] private bool isTask = false;
 #pragma warning disable CS0649
         [SerializeField] private int priority;
         [TextArea(5, 25)]
         [SerializeField] private string body = StartingBody;
-        [SerializeField] private UnityEngine.Object linkedObject;
+        [SerializeField] private UnityEngine.Object primaryLinkedObject;
+        [SerializeField] private UnityEngine.Object[] additionalLinkedObjects = System.Array.Empty<UnityEngine.Object>();
 #pragma warning restore CS0649
 
 
@@ -38,7 +38,9 @@ namespace AID
                 guidString = System.Guid.NewGuid().ToString("N");
         }
 
-        public UnityEngine.Object LinkedObject => linkedObject;
+        public UnityEngine.Object PrimaryLinkedObject => primaryLinkedObject;
+        public System.Collections.ObjectModel.ReadOnlyCollection<UnityEngine.Object> AdditionalLinkedObjects => 
+            System.Array.AsReadOnly(additionalLinkedObjects);
         public bool Hidden => isHidden;
         public int Priority => priority;
         public bool IsTask => isTask;
