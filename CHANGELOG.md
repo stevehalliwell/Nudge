@@ -5,9 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Window to show more info per line
-- Custom icon for commentSO in project (unity atoms has a solve for this https://github.com/AdamRamberg/unity-atoms/commit/cb6280a2554c9ac536d17485865fc4ae4ea85138)
-- Add Comment changed event to smooth editor window refresh logic
 
 
 ## [0.2.0] - 2020-07-29
