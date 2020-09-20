@@ -18,29 +18,42 @@ namespace AID.Editor
                 commentBeh.comment.IsTask ? nudgeSettings.commentTaskGizmoPath : nudgeSettings.sceneCommentGizmoPath,
                 true);
 
-            if (commentBeh.comment.LinkedObject != null)
+            if ((gizmoType & GizmoType.Selected) != 0 || nudgeSettings.drawLinkedConnection)
+            {
+                AttemptToDrawLine(commentBeh.transform, commentBeh.comment.PrimaryLinkedObject, commentBeh.comment, nudgeSettings);
+
+                foreach (var item in commentBeh.comment.AdditionalLinkedObjects)
+                {
+                    AttemptToDrawLine(commentBeh.transform, item, commentBeh.comment, nudgeSettings);
+                }
+            }
+        }
+
+        private static void AttemptToDrawLine(Transform from, UnityEngine.Object targetObj, Comment comment, NudgeSettings nudgeSettings)
+        {
+            if (targetObj != null)
             {
                 Transform linkedTransform = null;
-                if (commentBeh.comment.LinkedObject is GameObject)
+                if (targetObj is GameObject)
                 {
-                    linkedTransform = (commentBeh.comment.LinkedObject as GameObject).transform;
+                    linkedTransform = (targetObj as GameObject).transform;
                 }
-                else if (commentBeh.comment.LinkedObject is Component)
+                else if (targetObj is Component)
                 {
-                    linkedTransform = (commentBeh.comment.LinkedObject as Component).transform;
+                    linkedTransform = (targetObj as Component).transform;
                 }
 
-                if (linkedTransform != null &&
-                    ((gizmoType & GizmoType.Selected) != 0 || NudgeSettings.GetOrCreateSettings().drawLinkedConnection))
+
+                if (linkedTransform != null)
                 {
                     Gizmos.DrawIcon(
                         linkedTransform.position,
-                        commentBeh.comment.IsTask ? nudgeSettings.commentTaskLinkedGizmoPath : nudgeSettings.commentLinkedGizmoPath,
+                        comment.IsTask ? nudgeSettings.commentTaskLinkedGizmoPath : nudgeSettings.commentLinkedGizmoPath,
                         true);
 
                     var prevCol = Gizmos.color;
                     Gizmos.color = prevCol * nudgeSettings.linkedTint;
-                    Gizmos.DrawLine(commentBeh.transform.position, linkedTransform.position);
+                    Gizmos.DrawLine(from.position, linkedTransform.position);
                     Gizmos.color = prevCol;
                 }
             }
