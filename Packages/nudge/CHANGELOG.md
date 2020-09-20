@@ -5,10 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
 ### Added
+ - Comments can now reference a list of additional UnityEngine.Objects
  - Shortcuts ctrl shift c and ctrl alt shift c to create Scene Comment and Asset Comment, respectively.
-   - Comments created in this manner attempt to auto populate their linked object(s)
+   - This is now the primary way to create comments.
+   - Comments created in this manner attempt to auto populate their linked object(s) from you current selection.
 
 
 ## [0.2.0] - 2020-07-29
