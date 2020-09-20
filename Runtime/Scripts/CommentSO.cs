@@ -2,7 +2,8 @@
 
 namespace AID
 {
-    [CreateAssetMenu()]
+    //This is what we want but more, so we use custom menu items in NudgeMenuItems
+    //[CreateAssetMenu( menuName = "CommentSO %$&c", fileName = "New CommentSO")]
     public class CommentSO : ScriptableObject, ICommentHolder
     {
         public Comment comment;

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+ - Shortcuts ctrl shift c and ctrl alt shift c to create Scene Comment and Asset Comment, respectively.
+   - Comments created in this manner attempt to auto populate their linked object(s)
+
 
 ## [0.2.0] - 2020-07-29
 ### Added
