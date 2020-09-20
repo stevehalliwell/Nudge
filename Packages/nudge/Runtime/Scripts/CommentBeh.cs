@@ -2,6 +2,8 @@
 
 namespace AID
 {
+    //prevent it from showing up in add component menu it's not that kind of thing
+    [AddComponentMenu("")]
     /// <summary>
     /// Comment object as monobehaviour to allow for directly attaching as components or within the scene
     /// making direct reference to other elements in the scene itself via the Unity.Object reference.
@@ -30,6 +32,7 @@ namespace AID
         {
             UnityEditor.EditorGUIUtility.systemCopyBuffer = comment.GUIDString;
         }
+
 #endif
     }
 }

@@ -23,6 +23,8 @@ namespace AID.Editor
         public Color hiddenTint = new Color(0.8f, 0.8f, 0.8f, 1);
         public Color isTaskTint = new Color(0.8f, 1, 0.8f, 1);
         public Color linkedTint = new Color(0.8f, 0.8f, 1, 1);
+        public string defaultCommentName = "New Comment";
+        public string defaultTargetedCommentFormat = "Comment On {0}";
 
         [Tooltip("Draws, in the scene, an icon and line between a Scene Comment and the object to which it is refering.")]
         public bool drawLinkedConnection = true;
