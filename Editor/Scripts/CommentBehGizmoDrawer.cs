@@ -43,7 +43,6 @@ namespace AID.Editor
                     linkedTransform = (targetObj as Component).transform;
                 }
 
-
                 if (linkedTransform != null)
                 {
                     Gizmos.DrawIcon(

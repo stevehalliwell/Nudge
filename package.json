@@ -1,9 +1,11 @@
 {
   "name": "com.aid.nudge",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "displayName": "Nudge",
   "unity": "2019.3",
-  "keywords": ["comment"],
+  "keywords": [
+    "comment"
+  ],
   "author": {
     "name": "Steve Halliwell",
     "url": "http://stevehalliwell.com/"
@@ -12,9 +14,9 @@
   "samples": [
     {
       "displayName": "Simple Sample",
-      "description": "...",
+      "description": "Scene and Assets showing a variety of Comments and properties therein.",
       "path": "Samples~/Simple Sample"
     }
   ],
-  "description": "Add comments on objects, scenes and as assets."
+  "description": "Allows for adding comment and tasks to scene objects and project assets."
 }
