@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace AID
 {
@@ -23,6 +22,7 @@ namespace AID
 
         [TextArea(5, 25)]
         [SerializeField] private string body = StartingBody;
+
         [SerializeField] private UnityEngine.Object primaryLinkedObject;
         [SerializeField] private UnityEngine.Object[] additionalLinkedObjects = System.Array.Empty<UnityEngine.Object>();
 #pragma warning restore CS0649
@@ -48,10 +48,12 @@ namespace AID
                 additionalLinkedObjects[i - 1] = objs[i];
             }
         }
-		
+
         public UnityEngine.Object PrimaryLinkedObject => primaryLinkedObject;
-        public System.Collections.ObjectModel.ReadOnlyCollection<UnityEngine.Object> AdditionalLinkedObjects => 
+
+        public System.Collections.ObjectModel.ReadOnlyCollection<UnityEngine.Object> AdditionalLinkedObjects =>
             System.Array.AsReadOnly(additionalLinkedObjects);
+
         public bool Hidden => isHidden;
         public int Priority => priority;
         public bool IsTask => isTask;
