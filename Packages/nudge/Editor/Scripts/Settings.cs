@@ -32,10 +32,10 @@ namespace AID.Nudge
         [Tooltip("Draws, in the scene, an icon and line between a Scene Comment and the object to which it is refering.")]
         public bool drawLinkedConnection = true;
 
-        public string sceneCommentGizmoPath = "Packages/net.sam-tak.nudge/Gizmos/CommentIcon.png";
-        public string commentLinkedGizmoPath = "Packages/net.sam-tak.nudge/Gizmos/CommentLinkIcon.png";
-        public string commentTaskGizmoPath = "Packages/net.sam-tak.nudge/Gizmos/CommentTaskIcon.png";
-        public string commentTaskLinkedGizmoPath = "Packages/net.sam-tak.nudge/Gizmos/CommentTaskLinkIcon.png";
+        public string sceneCommentGizmoPath = "Packages/com.aid.nudge/Gizmos/CommentIcon.png";
+        public string commentLinkedGizmoPath = "Packages/com.aid.nudge/Gizmos/CommentLinkIcon.png";
+        public string commentTaskGizmoPath = "Packages/com.aid.nudge/Gizmos/CommentTaskIcon.png";
+        public string commentTaskLinkedGizmoPath = "Packages/com.aid.nudge/Gizmos/CommentTaskLinkIcon.png";
 
         public void Save() => Save(true);
     }
