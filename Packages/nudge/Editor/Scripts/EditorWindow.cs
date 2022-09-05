@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace AID.Nudge
 {
-    public class NudgeEditorWindow : EditorWindow
+    public class EditorWindow : UnityEditor.EditorWindow
     {
         protected Vector2 wholePanelScrollPos, sceneScrollPos, projectScrollPos;
         protected IComparer<ICommentHolder> sortingComparer;
@@ -34,7 +34,7 @@ namespace AID.Nudge
         private static void Init()
         {
             // Get existing open window or if none, make a new one:
-            NudgeEditorWindow window = (NudgeEditorWindow)EditorWindow.GetWindow(typeof(NudgeEditorWindow));
+            var window = UnityEditor.EditorWindow.GetWindow(typeof(EditorWindow)) as EditorWindow;
             window.Show();
         }
 

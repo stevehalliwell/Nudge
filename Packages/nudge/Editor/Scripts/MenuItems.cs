@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AID.Nudge
 {
-    public static class NudgeMenuItems
+    public static class MenuItems
     {
         [MenuItem("GameObject/Comment", false, 20)]
         public static void CreateSceneComment()
@@ -14,9 +14,6 @@ namespace AID.Nudge
 
             //should determine if this is in the scene or project?
             var newComment = new GameObject(settings.defaultCommentName, typeof(CommentGameObject)).GetComponent<CommentGameObject>();
-            newComment.tag = "EditorOnly";
-            newComment.normalTextColor = settings.defaultNormalTextColor;
-            newComment.hoverTextColor = settings.defaultHoverTextColor;
 
             if (selectedTrans != null && selectedTrans.Length > 0)
             {
@@ -41,7 +38,6 @@ namespace AID.Nudge
 
             if (selectedAssets != null && selectedAssets.Length > 0)
             {
-                Debug.Log($"{newComment.comment} {selectedAssets}");
                 newComment.comment.SetSelectedItems(selectedAssets);
                 newComment.name = string.Format(settings.defaultTargetedCommentFormat, selectedAssets[0].name);
             }
