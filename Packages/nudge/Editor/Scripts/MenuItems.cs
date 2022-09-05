@@ -1,24 +1,24 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace AID.Editor
+namespace AID.Nudge
 {
-    public static class NudgeMenuItems
+    public static class MenuItems
     {
-        [MenuItem("GameObject/Comment %#c", false, 20)]
+        [MenuItem("GameObject/Comment", false, 20)]
         public static void CreateSceneComment()
         {
-            var nudgeSettings = NudgeSettings.GetOrCreateSettings();
+            var settings = Settings.instance;
             //as per doco https://docs.unity3d.com/ScriptReference/Selection-transforms.html this gives only scene objects
             var selectedTrans = Selection.transforms;
 
             //should determine if this is in the scene or project?
-            var newComment = new GameObject(nudgeSettings.defaultCommentName, typeof(CommentBeh)).GetComponent<CommentBeh>();
+            var newComment = new GameObject(settings.defaultCommentName, typeof(CommentGameObject)).GetComponent<CommentGameObject>();
 
             if (selectedTrans != null && selectedTrans.Length > 0)
             {
                 newComment.comment.SetSelectedItems(selectedTrans);
-                newComment.gameObject.name = string.Format(nudgeSettings.defaultTargetedCommentFormat, selectedTrans[0].gameObject.name);
+                newComment.gameObject.name = string.Format(settings.defaultTargetedCommentFormat, selectedTrans[0].gameObject.name);
             }
 
             Undo.RegisterCreatedObjectUndo(newComment.gameObject, $"Created: {newComment.gameObject.name}");
@@ -26,20 +26,20 @@ namespace AID.Editor
             Selection.activeObject = newComment;
         }
 
-        [MenuItem("Assets/Create/CommentSO %#&c")]
+        [MenuItem("Assets/Create/Comment")]
         public static void CreateAssetComment()
         {
-            var nudgeSettings = NudgeSettings.GetOrCreateSettings();
+            var settings = Settings.instance;
 
-            var newComment = ScriptableObject.CreateInstance<CommentSO>();
-            newComment.name = nudgeSettings.defaultCommentName;
+            var newComment = ScriptableObject.CreateInstance<CommentScriptableObject>();
+            newComment.name = settings.defaultCommentName;
 
-            var selectedAssets = Selection.GetFiltered<Object>(SelectionMode.Assets);
+            var selectedAssets = Selection.GetFiltered<UnityEngine.Object>(SelectionMode.Assets);
 
             if (selectedAssets != null && selectedAssets.Length > 0)
             {
                 newComment.comment.SetSelectedItems(selectedAssets);
-                newComment.name = string.Format(nudgeSettings.defaultTargetedCommentFormat, selectedAssets[0].name);
+                newComment.name = string.Format(settings.defaultTargetedCommentFormat, selectedAssets[0].name);
             }
 
             ProjectWindowUtil.CreateAsset(newComment, newComment.name + ".asset");
